@@ -69,8 +69,8 @@ const TreeNode: React.FC<TreeNodeProps> = ({
       <div 
         className={cn(
           "flex items-center py-1.5 px-2 rounded-md cursor-pointer transition-all duration-200",
-          "hover:bg-primary/5",
-          isSelected ? "tree-node-active" : "",
+          "hover:bg-primary/10 hover:translate-x-1",
+          isSelected ? "bg-primary/5 text-primary font-medium" : "",
           depth === 0 ? "font-medium text-base" : "text-sm"
         )}
         style={{ paddingLeft: `${depth * 12 + 8}px` }}
@@ -82,8 +82,8 @@ const TreeNode: React.FC<TreeNodeProps> = ({
             onClick={handleToggle}
           >
             {isOpen ? 
-              <ChevronDown className="h-4 w-4 text-muted-foreground" /> : 
-              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              <ChevronDown className="h-4 w-4 text-muted-foreground animate-fade-in" /> : 
+              <ChevronRight className="h-4 w-4 text-muted-foreground animate-fade-in" />
             }
           </span>
         ) : (

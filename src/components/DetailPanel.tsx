@@ -85,7 +85,7 @@ const DetailPanel: React.FC<DetailPanelProps> = ({ selectedNode }) => {
   
   return (
     <div className="h-full overflow-y-auto p-4 animate-in">
-      <div className="flex items-center space-x-3 mb-6">
+      <div className="flex items-center space-x-3 mb-6 animate-fade-in">
         <div className="rounded-full bg-primary/10 p-2 text-primary">
           {icon}
         </div>
@@ -99,13 +99,13 @@ const DetailPanel: React.FC<DetailPanelProps> = ({ selectedNode }) => {
       </div>
       
       {details?.lastActive && (
-        <p className="mb-4 text-sm text-muted-foreground">
+        <p className="mb-4 text-sm text-muted-foreground animate-fade-in">
           Last Active: {details.lastActive}
         </p>
       )}
       
       {details?.description && (
-        <Card className="mb-6 backdrop-blur-panel">
+        <Card className="mb-6 backdrop-blur-panel hover:shadow-md transition-all duration-300 animate-fade-in">
           <CardHeader className="pb-2">
             <CardTitle className="text-base">Overview</CardTitle>
           </CardHeader>
@@ -116,7 +116,7 @@ const DetailPanel: React.FC<DetailPanelProps> = ({ selectedNode }) => {
       )}
       
       {details?.metrics && Object.keys(details.metrics).length > 0 && (
-        <Card className="mb-6 backdrop-blur-panel">
+        <Card className="mb-6 backdrop-blur-panel hover:shadow-md transition-all duration-300 animate-fade-in">
           <CardHeader className="pb-2">
             <CardTitle className="text-base">Metrics</CardTitle>
             <CardDescription>Key performance indicators</CardDescription>
@@ -124,7 +124,7 @@ const DetailPanel: React.FC<DetailPanelProps> = ({ selectedNode }) => {
           <CardContent>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3">
               {Object.entries(details.metrics).map(([key, value]) => (
-                <div key={key} className="bg-secondary/50 rounded-lg p-4">
+                <div key={key} className="bg-secondary/50 rounded-lg p-4 hover:bg-secondary/70 hover:translate-y-[-2px] transition-all duration-200">
                   <div className="text-muted-foreground text-xs mb-1">{key}</div>
                   <div className="text-lg font-medium">{value}</div>
                 </div>
@@ -135,7 +135,7 @@ const DetailPanel: React.FC<DetailPanelProps> = ({ selectedNode }) => {
       )}
       
       {selectedNode.children && selectedNode.children.length > 0 && (
-        <Card className="backdrop-blur-panel">
+        <Card className="backdrop-blur-panel hover:shadow-md transition-all duration-300 animate-fade-in">
           <CardHeader className="pb-2">
             <CardTitle className="text-base">
               {selectedNode.children.length} {selectedNode.children.length === 1 ? 'Child' : 'Children'}
@@ -145,7 +145,10 @@ const DetailPanel: React.FC<DetailPanelProps> = ({ selectedNode }) => {
           <CardContent>
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               {selectedNode.children.map((child) => (
-                <div key={child.id} className="flex items-center space-x-2 p-2 rounded-md bg-secondary/50">
+                <div 
+                  key={child.id} 
+                  className="flex items-center space-x-2 p-2 rounded-md bg-secondary/50 hover:bg-secondary/70 hover:translate-x-1 cursor-pointer transition-all duration-200"
+                >
                   <div className="text-muted-foreground">
                     {getNodeIcon(child.type)}
                   </div>
