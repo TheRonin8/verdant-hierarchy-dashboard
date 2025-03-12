@@ -1,9 +1,9 @@
-
-import React from 'react';
+import React, { useEffect } from 'react';
 import { TreeNodeData } from '@/utils/treeData';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Building, Building2, Cpu, Flower2, Globe, LayoutDashboard } from 'lucide-react';
+import { useMqttConnection } from '@/hooks/useMqttConnection';
 
 interface DetailPanelProps {
   selectedNode: TreeNodeData | null;
@@ -107,6 +107,25 @@ const getNodeTextColor = (type: string) => {
 };
 
 const DetailPanel: React.FC<DetailPanelProps> = ({ selectedNode }) => {
+  const mqttConfig = {
+    host: 'localhost',
+    port: 8083,
+    clientId: `plant-monitor-${Math.random().toString(16).slice(2)}`,
+  };
+
+  const { isConnected, sensorData, subscribe, unsubscribe } = useMqttConnection(mqttConfig);
+
+  useEffect(() => {
+    if (isConnected && selectedNode?.type === 'sensor') {
+      const topic = `sensors/${selectedNode.id}/data`;
+      subscribe(topic);
+      
+      return () => {
+        unsubscribe(topic);
+      };
+    }
+  }, [isConnected, selectedNode, subscribe, unsubscribe]);
+
   if (!selectedNode) {
     return (
       <div className="h-full flex items-center justify-center">
@@ -122,7 +141,20 @@ const DetailPanel: React.FC<DetailPanelProps> = ({ selectedNode }) => {
   const typeLabel = getTypeLabel(type);
   const bgGradient = getNodeBgColor(type);
   const textColor = getNodeTextColor(type);
-  
+
+  const sensorTopic = `sensors/${selectedNode.id}/data`;
+  const realtimeData = type === 'sensor' ? sensorData[sensorTopic] : null;
+
+  const displayMetrics = realtimeData && type === 'sensor'
+    ? {
+        ...details?.metrics,
+        ...(realtimeData.temperature && { 'Temperature': `${realtimeData.temperature}°C` }),
+        ...(realtimeData.humidity && { 'Humidity': `${realtimeData.humidity}%` }),
+        ...(realtimeData.co2 && { 'CO2 Level': `${realtimeData.co2}ppm` }),
+        ...(realtimeData.lightLevel && { 'Light Level': `${realtimeData.lightLevel}%` }),
+      }
+    : details?.metrics;
+
   return (
     <div className="h-full overflow-y-auto p-4 animate-in">
       <div className={`flex items-center space-x-3 mb-6 animate-fade-in p-4 rounded-lg bg-gradient-to-r ${bgGradient}`}>
@@ -140,7 +172,7 @@ const DetailPanel: React.FC<DetailPanelProps> = ({ selectedNode }) => {
       
       {details?.lastActive && (
         <p className="mb-4 text-sm text-muted-foreground animate-fade-in">
-          Last Active: {details.lastActive}
+          Last Active: {realtimeData ? new Date(realtimeData.timestamp).toLocaleString() : details.lastActive}
         </p>
       )}
       
@@ -155,15 +187,17 @@ const DetailPanel: React.FC<DetailPanelProps> = ({ selectedNode }) => {
         </Card>
       )}
       
-      {details?.metrics && Object.keys(details.metrics).length > 0 && (
+      {displayMetrics && Object.keys(displayMetrics).length > 0 && (
         <Card className="mb-6 backdrop-blur-panel border-blue-100/50 dark:border-blue-900/30 hover:shadow-md hover:shadow-blue-100/20 dark:hover:shadow-blue-900/10 transition-all duration-300 animate-fade-in">
           <CardHeader className="pb-2">
             <CardTitle className="text-base">Metrics</CardTitle>
-            <CardDescription>Key performance indicators</CardDescription>
+            <CardDescription>
+              {type === 'sensor' && isConnected ? 'Real-time sensor data' : 'Key performance indicators'}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3">
-              {Object.entries(details.metrics).map(([key, value], index) => {
+              {Object.entries(displayMetrics).map(([key, value], index) => {
                 const colors = [
                   'from-blue-50 to-blue-100 dark:from-blue-950/40 dark:to-blue-900/40 text-blue-800 dark:text-blue-300',
                   'from-green-50 to-green-100 dark:from-green-950/40 dark:to-green-900/40 text-green-800 dark:text-green-300',
