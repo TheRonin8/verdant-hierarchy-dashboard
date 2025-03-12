@@ -8,6 +8,25 @@ interface BreadcrumbTrailProps {
   onNavigate: (node: TreeNodeData) => void;
 }
 
+const getNodeColor = (type: string) => {
+  switch (type) {
+    case 'company':
+      return 'text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300';
+    case 'location':
+      return 'text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300';
+    case 'building':
+      return 'text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300';
+    case 'sensor':
+      return 'text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300';
+    case 'dashboard':
+      return 'text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300';
+    case 'planthead':
+      return 'text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300';
+    default:
+      return 'text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300';
+  }
+};
+
 const findPathToNode = (
   root: TreeNodeData,
   targetId: string,
@@ -36,7 +55,7 @@ const BreadcrumbTrail: React.FC<BreadcrumbTrailProps> = ({ node, onNavigate }) =
   if (!node.id.includes('-') || node.type === 'company') {
     return (
       <div className="flex items-center text-sm">
-        <span className="font-medium">{node.name}</span>
+        <span className={`font-medium ${getNodeColor(node.type)}`}>{node.name}</span>
       </div>
     );
   }
@@ -53,7 +72,7 @@ const BreadcrumbTrail: React.FC<BreadcrumbTrailProps> = ({ node, onNavigate }) =
       {path.map((item, index) => (
         <React.Fragment key={item.id}>
           <span 
-            className="cursor-pointer hover:text-primary transition-colors"
+            className={`cursor-pointer transition-colors ${getNodeColor(item.type)}`}
             onClick={() => onNavigate(item)}
           >
             {item.name}

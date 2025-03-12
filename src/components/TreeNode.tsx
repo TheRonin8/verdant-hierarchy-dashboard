@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ChevronDown, ChevronRight, Building, Globe, Cpu, LayoutDashboard, Flower2, Database, Building2 } from 'lucide-react';
 import { TreeNodeData } from '@/utils/treeData';
@@ -33,6 +32,27 @@ const getNodeIcon = (type: string) => {
   }
 };
 
+const getNodeColor = (type: string) => {
+  switch (type) {
+    case 'company':
+      return 'text-blue-600 dark:text-blue-400';
+    case 'location':
+      return 'text-indigo-600 dark:text-indigo-400';
+    case 'building':
+      return 'text-purple-600 dark:text-purple-400';
+    case 'sensor':
+      return 'text-green-600 dark:text-green-400';
+    case 'dashboard':
+      return 'text-orange-600 dark:text-orange-400';
+    case 'planthead':
+      return 'text-emerald-600 dark:text-emerald-400';
+    case 'data':
+      return 'text-cyan-600 dark:text-cyan-400';
+    default:
+      return 'text-gray-600 dark:text-gray-400';
+  }
+};
+
 const TreeNode: React.FC<TreeNodeProps> = ({ 
   node, 
   depth, 
@@ -43,6 +63,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
   const [isOpen, setIsOpen] = useState(initialIsOpen || depth === 0);
   const hasChildren = node.children && node.children.length > 0;
   const isSelected = selectedNode?.id === node.id;
+  const nodeColor = getNodeColor(node.type);
   
   const handleToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -70,7 +91,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
         className={cn(
           "flex items-center py-1.5 px-2 rounded-md cursor-pointer transition-all duration-200",
           "hover:bg-primary/10 hover:translate-x-1",
-          isSelected ? "bg-primary/5 text-primary font-medium" : "",
+          isSelected ? `bg-${nodeColor.split('-')[1]}-50/30 dark:bg-${nodeColor.split('-')[1]}-900/20 ${nodeColor} font-medium` : "",
           depth === 0 ? "font-medium text-base" : "text-sm"
         )}
         style={{ paddingLeft: `${depth * 12 + 8}px` }}
@@ -82,14 +103,14 @@ const TreeNode: React.FC<TreeNodeProps> = ({
             onClick={handleToggle}
           >
             {isOpen ? 
-              <ChevronDown className="h-4 w-4 text-muted-foreground animate-fade-in" /> : 
-              <ChevronRight className="h-4 w-4 text-muted-foreground animate-fade-in" />
+              <ChevronDown className={`h-4 w-4 ${nodeColor} animate-fade-in`} /> : 
+              <ChevronRight className={`h-4 w-4 ${nodeColor} animate-fade-in`} />
             }
           </span>
         ) : (
           <span className="w-5 h-5" />
         )}
-        <span className="mr-2 flex items-center justify-center text-muted-foreground">
+        <span className={`mr-2 flex items-center justify-center ${nodeColor}`}>
           {getNodeIcon(node.type)}
         </span>
         <span className="truncate">{node.name}</span>
