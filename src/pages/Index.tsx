@@ -1,12 +1,35 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React, { useState } from 'react';
+import TreeNavigation from '@/components/TreeNavigation';
+import DetailPanel from '@/components/DetailPanel';
+import { treeData, TreeNodeData } from '@/utils/treeData';
 
 const Index = () => {
+  const [selectedNode, setSelectedNode] = useState<TreeNodeData | null>(treeData);
+
+  const handleNodeSelect = (node: TreeNodeData) => {
+    setSelectedNode(node);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
+    <div className="fixed inset-0 flex flex-col">
+      <header className="h-14 border-b border-border flex items-center px-6 backdrop-blur-panel">
+        <h1 className="text-xl font-semibold">Plant Monitoring System</h1>
+      </header>
+      
+      <main className="flex-1 flex overflow-hidden">
+        <aside className="w-72 border-r border-border overflow-hidden flex flex-col">
+          <TreeNavigation 
+            treeData={treeData} 
+            selectedNode={selectedNode} 
+            onNodeSelect={handleNodeSelect} 
+          />
+        </aside>
+        
+        <section className="flex-1 overflow-hidden flex flex-col">
+          <DetailPanel selectedNode={selectedNode} />
+        </section>
+      </main>
     </div>
   );
 };
