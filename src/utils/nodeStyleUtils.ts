@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { Building, Building2, Cpu, Flower2, Globe, LayoutDashboard } from 'lucide-react';
 
 export const getNodeIcon = (type: string, className = 'h-5 w-5') => {

@@ -4,6 +4,7 @@ export interface TreeNodeData {
   name: string;
   type: 'company' | 'location' | 'building' | 'sensor' | 'dashboard' | 'planthead' | 'data';
   children?: TreeNodeData[];
+  mqttTopic?: string;
   details?: {
     status?: 'online' | 'offline' | 'warning';
     lastActive?: string;
@@ -15,149 +16,204 @@ export interface TreeNodeData {
 
 export const treeData: TreeNodeData = {
   id: 'company-1',
-  name: 'EcoTech Solutions',
+  name: 'CLS Behring',
   type: 'company',
+  mqttTopic: 'CLS_Behring',
   details: {
     description: 'Global leader in plant monitoring and environmental solutions.',
     metrics: {
-      'Total Locations': 4,
-      'Total Buildings': 12,
-      'Total Sensors': 248,
-      'Plants Monitored': '1,450+',
-      'Efficiency Rating': '94%',
+      'Total Locations': 2,
+      'Total Buildings': 4,
+      'Total Sensors': 12,
     }
   },
   children: [
     {
       id: 'location-1',
-      name: 'London',
+      name: 'Kan',
       type: 'location',
+      mqttTopic: 'CLS_Behring/Kan',
       details: {
-        description: 'London metropolitan area operations hub.',
+        description: 'Kan location operations hub.',
         metrics: {
           'Buildings': 3,
-          'Sensors': 86,
-          'Plants Monitored': '420+',
-          'Efficiency Rating': '92%',
+          'Sensors': 9,
         }
       },
       children: [
         {
           id: 'building-1',
-          name: 'LDN-A12',
+          name: 'B16NORTH',
           type: 'building',
+          mqttTopic: 'CLS_Behring/Kan/B16NORTH',
           details: {
-            description: 'London Downtown Research Center',
+            description: 'B16NORTH Building',
             metrics: {
-              'Sensors': 32,
-              'Plants Monitored': '180+',
-              'Efficiency Rating': '95%',
+              'Sensors': 3,
               'Area': '12,500 sq.ft.',
             }
           },
           children: [
             {
               id: 'dashboard-1',
-              name: 'Operations Dashboard',
+              name: 'Dashboard',
               type: 'dashboard',
+              mqttTopic: 'CLS_Behring/Kan/B16NORTH/Dashboard',
               details: {
-                description: 'Real-time monitoring dashboard for LDN-A12',
-                metrics: {
-                  'Uptime': '99.8%',
-                  'Data Points': '128M+',
-                  'Alerts (24h)': 2,
-                }
-              }
-            },
-            {
-              id: 'sensor-1',
-              name: 'Temperature Sensors',
-              type: 'sensor',
-              details: {
-                status: 'online',
-                lastActive: 'Active now',
-                description: 'Network of 12 temperature sensors located throughout the building',
-                metrics: {
-                  'Average Temp': '22.3°C',
-                  'Min Temp': '20.1°C',
-                  'Max Temp': '24.5°C',
-                  'Alerts (24h)': 0,
-                }
-              }
-            },
-            {
-              id: 'sensor-2',
-              name: 'Humidity Sensors',
-              type: 'sensor',
-              details: {
-                status: 'online',
-                lastActive: 'Active now',
-                description: 'Network of 10 humidity sensors located throughout the building',
-                metrics: {
-                  'Average Humidity': '45%',
-                  'Min Humidity': '40%',
-                  'Max Humidity': '52%',
-                  'Alerts (24h)': 1,
-                }
+                description: 'Real-time monitoring dashboard for B16NORTH',
+                metrics: {}
               }
             },
             {
               id: 'planthead-1',
-              name: 'Plant Health Analysis',
+              name: 'Plant Head',
               type: 'planthead',
+              mqttTopic: 'CLS_Behring/Kan/B16NORTH/PLANT_HEAD',
               details: {
-                description: 'Comprehensive plant health metrics and analysis',
-                metrics: {
-                  'Plants Monitored': 180,
-                  'Health Score': '91/100',
-                  'Growth Rate': '+3.2%/month',
-                  'Intervention Needed': 4,
-                }
+                description: 'Plant head information',
+                metrics: {}
+              }
+            },
+            {
+              id: 'sensor-1',
+              name: 'Vibration Sensors',
+              type: 'sensor',
+              mqttTopic: 'CLS_Behring/Kan/B16NORTH/VIBRATION',
+              details: {
+                status: 'online',
+                lastActive: 'Active now',
+                description: 'Vibration sensors data',
+                metrics: {}
+              }
+            },
+            {
+              id: 'sensor-2',
+              name: 'Current Sensors',
+              type: 'sensor',
+              mqttTopic: 'CLS_Behring/Kan/B16NORTH/CURRENT',
+              details: {
+                status: 'online',
+                lastActive: 'Active now',
+                description: 'Current sensors data',
+                metrics: {}
               }
             }
           ]
         },
         {
           id: 'building-2',
-          name: 'LDN-B45',
+          name: 'B16SOUTH',
           type: 'building',
+          mqttTopic: 'CLS_Behring/Kan/B16SOUTH',
           details: {
-            description: 'London East Production Facility',
+            description: 'B16SOUTH Building',
             metrics: {
-              'Sensors': 28,
-              'Plants Monitored': '120+',
-              'Efficiency Rating': '89%',
+              'Sensors': 3,
               'Area': '15,200 sq.ft.',
             }
           },
           children: [
             {
               id: 'dashboard-2',
-              name: 'Operations Dashboard',
+              name: 'Dashboard',
               type: 'dashboard',
+              mqttTopic: 'CLS_Behring/Kan/B16SOUTH/Dashboard',
               details: {
-                description: 'Real-time monitoring dashboard for LDN-B45',
-                metrics: {
-                  'Uptime': '99.5%',
-                  'Data Points': '98M+',
-                  'Alerts (24h)': 5,
-                }
+                description: 'Real-time monitoring dashboard for B16SOUTH',
+                metrics: {}
+              }
+            },
+            {
+              id: 'planthead-2',
+              name: 'Plant Head',
+              type: 'planthead',
+              mqttTopic: 'CLS_Behring/Kan/B16SOUTH/PLANT_HEAD',
+              details: {
+                description: 'Plant head information',
+                metrics: {}
               }
             },
             {
               id: 'sensor-3',
-              name: 'Environment Sensors',
+              name: 'Vibration Sensors',
               type: 'sensor',
+              mqttTopic: 'CLS_Behring/Kan/B16SOUTH/VIBRATION',
               details: {
-                status: 'warning',
-                lastActive: '2 minutes ago',
-                description: 'Combined environment monitoring sensors',
-                metrics: {
-                  'Air Quality': '86/100',
-                  'Light Levels': '72/100',
-                  'CO2 Levels': '450ppm',
-                  'Alerts (24h)': 2,
-                }
+                status: 'online',
+                lastActive: 'Active now',
+                description: 'Vibration sensors data',
+                metrics: {}
+              }
+            },
+            {
+              id: 'sensor-4',
+              name: 'Current Sensors',
+              type: 'sensor',
+              mqttTopic: 'CLS_Behring/Kan/B16SOUTH/CURRENT',
+              details: {
+                status: 'online',
+                lastActive: 'Active now',
+                description: 'Current sensors data',
+                metrics: {}
+              }
+            }
+          ]
+        },
+        {
+          id: 'building-3',
+          name: 'B32',
+          type: 'building',
+          mqttTopic: 'CLS_Behring/Kan/B32',
+          details: {
+            description: 'B32 Building',
+            metrics: {
+              'Sensors': 3,
+              'Area': '18,700 sq.ft.',
+            }
+          },
+          children: [
+            {
+              id: 'dashboard-3',
+              name: 'Dashboard',
+              type: 'dashboard',
+              mqttTopic: 'CLS_Behring/Kan/B32/Dashboard',
+              details: {
+                description: 'Real-time monitoring dashboard for B32',
+                metrics: {}
+              }
+            },
+            {
+              id: 'planthead-3',
+              name: 'Plant Head',
+              type: 'planthead',
+              mqttTopic: 'CLS_Behring/Kan/B32/PLANT_HEAD',
+              details: {
+                description: 'Plant head information',
+                metrics: {}
+              }
+            },
+            {
+              id: 'sensor-5',
+              name: 'Vibration Sensors',
+              type: 'sensor',
+              mqttTopic: 'CLS_Behring/Kan/B32/VIBRATION',
+              details: {
+                status: 'online',
+                lastActive: 'Active now',
+                description: 'Vibration sensors data',
+                metrics: {}
+              }
+            },
+            {
+              id: 'sensor-6',
+              name: 'Current Sensors',
+              type: 'sensor',
+              mqttTopic: 'CLS_Behring/Kan/B32/CURRENT',
+              details: {
+                status: 'online',
+                lastActive: 'Active now',
+                description: 'Current sensors data',
+                metrics: {}
               }
             }
           ]
@@ -166,94 +222,87 @@ export const treeData: TreeNodeData = {
     },
     {
       id: 'location-2',
-      name: 'New York',
+      name: 'MBR',
       type: 'location',
+      mqttTopic: 'CLS_Behring/MBR',
       details: {
-        description: 'New York operations and research center.',
+        description: 'MBR operations and research center.',
         metrics: {
-          'Buildings': 4,
-          'Sensors': 92,
-          'Plants Monitored': '520+',
-          'Efficiency Rating': '96%',
-        }
-      },
-      children: [
-        {
-          id: 'building-3',
-          name: 'NYC-H27',
-          type: 'building',
-          details: {
-            description: 'Manhattan Research Headquarters',
-            metrics: {
-              'Sensors': 45,
-              'Plants Monitored': '350+',
-              'Efficiency Rating': '97%',
-              'Area': '18,700 sq.ft.',
-            }
-          },
-          children: []
-        }
-      ]
-    },
-    {
-      id: 'location-3',
-      name: 'Paris',
-      type: 'location',
-      details: {
-        description: 'European operations headquarters located in Paris.',
-        metrics: {
-          'Buildings': 3,
-          'Sensors': 42,
-          'Plants Monitored': '310+',
-          'Efficiency Rating': '93%',
+          'Buildings': 1,
+          'Sensors': 4,
         }
       },
       children: [
         {
           id: 'building-4',
-          name: 'PAR-C09',
+          name: 'H67',
           type: 'building',
+          mqttTopic: 'CLS_Behring/MBR/H67',
           details: {
-            description: 'Central Paris Research Laboratory',
+            description: 'H67 Research Facility',
             metrics: {
-              'Sensors': 25,
-              'Plants Monitored': '210+',
-              'Efficiency Rating': '94%',
+              'Sensors': 4,
               'Area': '11,200 sq.ft.',
             }
           },
-          children: []
-        }
-      ]
-    },
-    {
-      id: 'location-4',
-      name: 'Oslo',
-      type: 'location',
-      details: {
-        description: 'Nordic research and development center.',
-        metrics: {
-          'Buildings': 2,
-          'Sensors': 28,
-          'Plants Monitored': '200+',
-          'Efficiency Rating': '95%',
-        }
-      },
-      children: [
-        {
-          id: 'building-5',
-          name: 'OSL-A04',
-          type: 'building',
-          details: {
-            description: 'Oslo Fjord Environmental Center',
-            metrics: {
-              'Sensors': 18,
-              'Plants Monitored': '150+',
-              'Efficiency Rating': '96%',
-              'Area': '9,800 sq.ft.',
+          children: [
+            {
+              id: 'dashboard-4',
+              name: 'Dashboard',
+              type: 'dashboard',
+              mqttTopic: 'CLS_Behring/MBR/H67/Dashboard',
+              details: {
+                description: 'Real-time monitoring dashboard for H67',
+                metrics: {}
+              }
+            },
+            {
+              id: 'planthead-4',
+              name: 'Plant Head',
+              type: 'planthead',
+              mqttTopic: 'CLS_Behring/MBR/H67/PLANT_HEAD',
+              details: {
+                description: 'Plant head information',
+                metrics: {}
+              }
+            },
+            {
+              id: 'sensor-7',
+              name: 'Vibration Sensors',
+              type: 'sensor',
+              mqttTopic: 'CLS_Behring/MBR/H67/VIBRATION',
+              details: {
+                status: 'online',
+                lastActive: 'Active now',
+                description: 'Vibration sensors data',
+                metrics: {}
+              }
+            },
+            {
+              id: 'sensor-8',
+              name: 'Temperature Sensors',
+              type: 'sensor',
+              mqttTopic: 'CLS_Behring/MBR/H67/TEMPERATURE',
+              details: {
+                status: 'online',
+                lastActive: 'Active now',
+                description: 'Temperature sensors data',
+                metrics: {}
+              }
+            },
+            {
+              id: 'sensor-9',
+              name: 'Pressure Sensors',
+              type: 'sensor',
+              mqttTopic: 'CLS_Behring/MBR/H67/PRESSURE',
+              details: {
+                status: 'online',
+                lastActive: 'Active now',
+                description: 'Pressure sensors data',
+                metrics: {}
+              }
             }
-          },
-          children: []
+          ]
         }
       ]
     }

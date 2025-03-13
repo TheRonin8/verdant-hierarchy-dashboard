@@ -9,35 +9,31 @@ interface MqttConfig {
   clientId: string;
   username?: string;
   password?: string;
-}
-
-interface SensorData {
-  temperature?: number;
-  humidity?: number;
-  co2?: number;
-  lightLevel?: number;
-  timestamp: number;
+  protocol?: string;
 }
 
 export const useMqttConnection = (config: MqttConfig) => {
   const [client, setClient] = useState<mqtt.MqttClient | null>(null);
-  const [sensorData, setSensorData] = useState<Record<string, SensorData>>({});
+  const [sensorData, setSensorData] = useState<Record<string, any>>({});
   const [isConnected, setIsConnected] = useState(false);
 
   // Connect to MQTT broker
   useEffect(() => {
-    const { host, port, clientId, username, password } = config;
-    const url = `ws://${host}:${port}/mqtt`;
+    const { host, port, clientId, username, password, protocol = 'mqtt' } = config;
+    const url = protocol === 'ws' ? `ws://${host}:${port}/mqtt` : `mqtt://${host}:${port}`;
+    
+    console.log(`Connecting to MQTT broker at ${url}`);
     
     const mqttClient = mqtt.connect(url, {
       clientId,
       username,
       password,
-      protocol: 'ws',
+      protocol,
     });
 
     mqttClient.on('connect', () => {
       setIsConnected(true);
+      console.log('Connected to MQTT broker');
       toast.success('Connected to MQTT broker');
     });
 
@@ -49,6 +45,7 @@ export const useMqttConnection = (config: MqttConfig) => {
     mqttClient.on('message', (topic, message) => {
       try {
         const data = JSON.parse(message.toString());
+        console.log(`Received message on topic ${topic}:`, data);
         setSensorData(prev => ({
           ...prev,
           [topic]: {
@@ -76,6 +73,7 @@ export const useMqttConnection = (config: MqttConfig) => {
           console.error('Subscription error:', err);
           toast.error(`Failed to subscribe to ${topic}`);
         } else {
+          console.log(`Subscribed to ${topic}`);
           toast.success(`Subscribed to ${topic}`);
         }
       });

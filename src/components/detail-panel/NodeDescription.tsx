@@ -17,7 +17,7 @@ const NodeDescription: React.FC<NodeDescriptionProps> = ({ description }) => {
         <CardTitle className="text-base">Overview</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-sm">{description}</p>
+        <p className="text-sm leading-relaxed">{description}</p>
       </CardContent>
     </Card>
   );

@@ -13,20 +13,21 @@ interface DetailPanelProps {
 
 const DetailPanel: React.FC<DetailPanelProps> = ({ selectedNode }) => {
   const mqttConfig = {
-    host: 'localhost',
-    port: 8083,
+    host: 'broker.emqx.io',
+    port: 1883,
     clientId: `plant-monitor-${Math.random().toString(16).slice(2)}`,
+    protocol: 'mqtt'
   };
 
   const { isConnected, sensorData, subscribe, unsubscribe } = useMqttConnection(mqttConfig);
 
   useEffect(() => {
-    if (isConnected && selectedNode?.type === 'sensor') {
-      const topic = `sensors/${selectedNode.id}/data`;
-      subscribe(topic);
+    if (isConnected && selectedNode?.mqttTopic) {
+      console.log(`Subscribing to topic ${selectedNode.mqttTopic}`);
+      subscribe(selectedNode.mqttTopic);
       
       return () => {
-        unsubscribe(topic);
+        unsubscribe(selectedNode.mqttTopic!);
       };
     }
   }, [isConnected, selectedNode, subscribe, unsubscribe]);
@@ -41,27 +42,71 @@ const DetailPanel: React.FC<DetailPanelProps> = ({ selectedNode }) => {
     );
   }
   
-  const { details, type } = selectedNode;
-  const sensorTopic = `sensors/${selectedNode.id}/data`;
-  const realtimeData = type === 'sensor' ? sensorData[sensorTopic] : null;
+  const { details, type, mqttTopic } = selectedNode;
+  const realtimeData = mqttTopic && sensorData[mqttTopic] ? sensorData[mqttTopic] : null;
 
-  const displayMetrics = realtimeData && type === 'sensor'
-    ? {
-        ...details?.metrics,
-        ...(realtimeData.temperature && { 'Temperature': `${realtimeData.temperature}°C` }),
-        ...(realtimeData.humidity && { 'Humidity': `${realtimeData.humidity}%` }),
-        ...(realtimeData.co2 && { 'CO2 Level': `${realtimeData.co2}ppm` }),
-        ...(realtimeData.lightLevel && { 'Light Level': `${realtimeData.lightLevel}%` }),
-      }
-    : details?.metrics;
+  // Process metrics based on node type and received data
+  let displayMetrics: Record<string, string | number> = {};
+  
+  // Start with any existing metrics
+  if (details?.metrics) {
+    displayMetrics = { ...details.metrics };
+  }
+
+  // Process MQTT data based on node type
+  if (realtimeData) {
+    switch (type) {
+      case 'sensor':
+        if (selectedNode.name.includes('Vibration')) {
+          Object.entries(realtimeData).forEach(([key, value]) => {
+            if (key !== 'timestamp') {
+              displayMetrics[key] = value as string;
+            }
+          });
+        } else if (selectedNode.name.includes('Temperature')) {
+          displayMetrics['Temperature'] = `${realtimeData.Temperature}°C`;
+        } else if (selectedNode.name.includes('Pressure')) {
+          displayMetrics['Pressure'] = `${realtimeData.Pressure} hPa`;
+        } else if (selectedNode.name.includes('Current')) {
+          Object.entries(realtimeData).forEach(([key, value]) => {
+            if (key !== 'timestamp') {
+              displayMetrics[key] = `${value}A`;
+            }
+          });
+        }
+        break;
+      case 'dashboard':
+        Object.entries(realtimeData).forEach(([key, value]) => {
+          if (key !== 'timestamp') {
+            displayMetrics[key] = value as string;
+          }
+        });
+        break;
+      case 'planthead':
+        Object.entries(realtimeData).forEach(([key, value]) => {
+          if (key !== 'timestamp') {
+            displayMetrics[key] = value as string;
+          }
+        });
+        break;
+      default:
+        break;
+    }
+  }
 
   return (
     <div className="h-full overflow-y-auto p-4 animate-in">
       <NodeHeader node={selectedNode} />
       
-      {details?.lastActive && (
-        <p className="mb-4 text-sm text-muted-foreground animate-fade-in">
-          Last Active: {realtimeData ? new Date(realtimeData.timestamp).toLocaleString() : details.lastActive}
+      {isConnected && mqttTopic ? (
+        <p className="mb-4 text-sm text-green-600 dark:text-green-400 animate-fade-in">
+          {realtimeData ? 
+            `Receiving live data from ${mqttTopic} (Last update: ${new Date().toLocaleTimeString()})` : 
+            `Waiting for data on topic ${mqttTopic}...`}
+        </p>
+      ) : (
+        <p className="mb-4 text-sm text-yellow-600 dark:text-yellow-400 animate-fade-in">
+          Not connected to MQTT broker. Check your connection settings.
         </p>
       )}
       
@@ -69,12 +114,12 @@ const DetailPanel: React.FC<DetailPanelProps> = ({ selectedNode }) => {
         <NodeDescription description={details.description} />
       )}
       
-      {displayMetrics && Object.keys(displayMetrics).length > 0 && (
+      {Object.keys(displayMetrics).length > 0 && (
         <MetricsDisplay 
           title="Metrics" 
-          description={type === 'sensor' && isConnected ? 'Real-time sensor data' : 'Key performance indicators'}
+          description={realtimeData ? 'Real-time data' : 'Static metrics'}
           metrics={displayMetrics}
-          isRealtime={type === 'sensor' && isConnected}
+          isRealtime={!!realtimeData}
         />
       )}
       
