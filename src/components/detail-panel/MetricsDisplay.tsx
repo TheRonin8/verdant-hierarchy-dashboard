@@ -27,10 +27,20 @@ const MetricsDisplay: React.FC<MetricsDisplayProps> = ({ title, description, met
     <Card className="mb-6 backdrop-blur-panel border-blue-100/50 dark:border-blue-900/30 hover:shadow-md hover:shadow-blue-100/20 dark:hover:shadow-blue-900/10 transition-all duration-300 animate-fade-in">
       <CardHeader className="pb-2">
         <CardTitle className="text-base">{title}</CardTitle>
-        {description && <CardDescription>{description}</CardDescription>}
+        {description && 
+          <CardDescription>
+            {description} 
+            {isRealtime && 
+              <span className="inline-flex ml-2 items-center">
+                <span className="w-2 h-2 rounded-full bg-green-500 mr-1 animate-pulse"></span>
+                live
+              </span>
+            }
+          </CardDescription>
+        }
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
           {Object.entries(metrics).map(([key, value], index) => {
             const colorClass = colors[index % colors.length];
             
