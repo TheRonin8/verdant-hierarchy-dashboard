@@ -55,8 +55,7 @@ export const useMqttConnection = (config: MqttConfig) => {
     mqttClient.on('connect', () => {
       setIsConnected(true);
       console.log('Connected to MQTT broker');
-      // Show only a simple connection toast
-      toast.success('Connected to MQTT broker');
+      toast.success('Connected to broker');
     });
 
     mqttClient.on('error', (err) => {
@@ -70,13 +69,15 @@ export const useMqttConnection = (config: MqttConfig) => {
         console.log(`Received message on topic ${topic}:`, data);
         setSensorData(prev => ({
           ...prev,
-          [topic]: {
-            ...data,
-            timestamp: Date.now()
-          }
+          [topic]: data
         }));
       } catch (error) {
         console.error('Error parsing MQTT message:', error);
+        // Try to display as plain text if not JSON
+        setSensorData(prev => ({
+          ...prev,
+          [topic]: { value: message.toString() }
+        }));
       }
     });
 
@@ -90,13 +91,12 @@ export const useMqttConnection = (config: MqttConfig) => {
   // Subscribe to topics
   const subscribe = useCallback((topic: string) => {
     if (client && isConnected) {
+      console.log(`Subscribing to topic: ${topic}`);
       client.subscribe(topic, (err) => {
         if (err) {
           console.error('Subscription error:', err);
-          // No toast notification for subscription
         } else {
-          console.log(`Subscribed to ${topic}`);
-          // No toast notification for subscription
+          console.log(`Successfully subscribed to ${topic}`);
         }
       });
     }
