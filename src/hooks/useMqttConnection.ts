@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import mqtt from 'mqtt';
+import mqtt, { MqttClient, IClientOptions, MqttProtocol } from 'mqtt';
 import { toast } from "sonner";
 
 interface MqttConfig {
@@ -13,23 +13,44 @@ interface MqttConfig {
 }
 
 export const useMqttConnection = (config: MqttConfig) => {
-  const [client, setClient] = useState<mqtt.MqttClient | null>(null);
+  const [client, setClient] = useState<MqttClient | null>(null);
   const [sensorData, setSensorData] = useState<Record<string, any>>({});
   const [isConnected, setIsConnected] = useState(false);
 
   // Connect to MQTT broker
   useEffect(() => {
     const { host, port, clientId, username, password, protocol = 'mqtt' } = config;
-    const url = protocol === 'ws' ? `ws://${host}:${port}/mqtt` : `mqtt://${host}:${port}`;
+    
+    // Handle WebSocket protocol for HTTPS sites
+    let websocketProtocol: 'ws' | 'wss' = 'ws';
+    if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
+      websocketProtocol = 'wss';
+    }
+    
+    // Determine the correct URL based on the provided protocol and environment
+    let url: string;
+    if (protocol === 'ws' || protocol === 'wss') {
+      url = `${websocketProtocol}://${host}:${port}/mqtt`;
+    } else {
+      url = `${protocol}://${host}:${port}`;
+    }
     
     console.log(`Connecting to MQTT broker at ${url}`);
     
-    const mqttClient = mqtt.connect(url, {
+    // Create proper MQTT client options with typed protocol
+    const mqttProtocol = (protocol === 'ws' || protocol === 'wss') ? protocol as MqttProtocol : 'mqtt' as MqttProtocol;
+    
+    const mqttOptions: IClientOptions = {
       clientId,
-      username,
-      password,
-      protocol,
-    });
+      protocol: mqttProtocol,
+    };
+    
+    // Add optional auth credentials if provided
+    if (username) mqttOptions.username = username;
+    if (password) mqttOptions.password = password;
+    
+    // Connect to the broker
+    const mqttClient = mqtt.connect(url, mqttOptions);
 
     mqttClient.on('connect', () => {
       setIsConnected(true);

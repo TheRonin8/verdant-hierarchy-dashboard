@@ -12,11 +12,14 @@ interface DetailPanelProps {
 }
 
 const DetailPanel: React.FC<DetailPanelProps> = ({ selectedNode }) => {
+  // Determine if we need to use secure protocols based on the current page protocol
+  const isSecure = typeof window !== 'undefined' && window.location.protocol === 'https:';
+  
   const mqttConfig = {
     host: 'broker.emqx.io',
-    port: 1883,
+    port: isSecure ? 8084 : 1883, // Use WebSocket secure port when on HTTPS
     clientId: `plant-monitor-${Math.random().toString(16).slice(2)}`,
-    protocol: 'mqtt'
+    protocol: isSecure ? 'wss' : 'mqtt' // Use WebSocket secure when on HTTPS
   };
 
   const { isConnected, sensorData, subscribe, unsubscribe } = useMqttConnection(mqttConfig);
