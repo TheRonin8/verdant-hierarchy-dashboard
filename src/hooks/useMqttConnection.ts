@@ -55,6 +55,7 @@ export const useMqttConnection = (config: MqttConfig) => {
     mqttClient.on('connect', () => {
       setIsConnected(true);
       console.log('Connected to MQTT broker');
+      // Show only a simple connection toast
       toast.success('Connected to MQTT broker');
     });
 
@@ -92,10 +93,10 @@ export const useMqttConnection = (config: MqttConfig) => {
       client.subscribe(topic, (err) => {
         if (err) {
           console.error('Subscription error:', err);
-          toast.error(`Failed to subscribe to ${topic}`);
+          // No toast notification for subscription
         } else {
           console.log(`Subscribed to ${topic}`);
-          toast.success(`Subscribed to ${topic}`);
+          // No toast notification for subscription
         }
       });
     }
