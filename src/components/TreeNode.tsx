@@ -1,7 +1,9 @@
+
 import React, { useState } from 'react';
-import { ChevronDown, ChevronRight, Building, Globe, Cpu, LayoutDashboard, Flower2, Database, Building2 } from 'lucide-react';
+import { ChevronDown, ChevronRight, Database } from 'lucide-react';
 import { TreeNodeData } from '@/utils/treeData';
 import { cn } from '@/lib/utils';
+import { getNodeIcon } from '@/utils/nodeStyleUtils';
 
 interface TreeNodeProps {
   node: TreeNodeData;
@@ -10,27 +12,6 @@ interface TreeNodeProps {
   onSelect: (node: TreeNodeData) => void;
   isOpen?: boolean;
 }
-
-const getNodeIcon = (type: string) => {
-  switch (type) {
-    case 'company':
-      return <Building2 className="h-4 w-4" />;
-    case 'location':
-      return <Globe className="h-4 w-4" />;
-    case 'building':
-      return <Building className="h-4 w-4" />;
-    case 'sensor':
-      return <Cpu className="h-4 w-4" />;
-    case 'dashboard':
-      return <LayoutDashboard className="h-4 w-4" />;
-    case 'planthead':
-      return <Flower2 className="h-4 w-4" />;
-    case 'data':
-      return <Database className="h-4 w-4" />;
-    default:
-      return <Database className="h-4 w-4" />;
-  }
-};
 
 const getNodeColor = (type: string) => {
   switch (type) {
@@ -64,6 +45,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
   const hasChildren = node.children && node.children.length > 0;
   const isSelected = selectedNode?.id === node.id;
   const nodeColor = getNodeColor(node.type);
+  const NodeIcon = getNodeIcon(node.type);
   
   const handleToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -111,7 +93,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
           <span className="w-5 h-5" />
         )}
         <span className={`mr-2 flex items-center justify-center ${nodeColor}`}>
-          {getNodeIcon(node.type)}
+          <NodeIcon className="h-4 w-4" />
         </span>
         <span className="truncate">{node.name}</span>
         {statusIndicator}

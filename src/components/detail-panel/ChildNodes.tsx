@@ -26,6 +26,7 @@ const ChildNodes: React.FC<ChildNodesProps> = ({ node }) => {
       <CardContent>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {node.children.map((child) => {
+            const ChildIcon = getNodeIcon(child.type);
             const childTextColor = getNodeTextColor(child.type);
             const childBgColor = getNodeBgColor(child.type);
             
@@ -35,7 +36,7 @@ const ChildNodes: React.FC<ChildNodesProps> = ({ node }) => {
                 className={`flex items-center space-x-2 p-3 rounded-md bg-gradient-to-r ${childBgColor} hover:translate-x-1 cursor-pointer transition-all duration-200`}
               >
                 <div className={childTextColor}>
-                  {getNodeIcon(child.type)}
+                  <ChildIcon className="h-5 w-5" />
                 </div>
                 <div>
                   <div className="text-sm font-medium">{child.name}</div>

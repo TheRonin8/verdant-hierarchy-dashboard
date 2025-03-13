@@ -1,23 +1,23 @@
-
 import React from 'react';
 import { Building, Building2, Cpu, Flower2, Globe, LayoutDashboard } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
 
-export const getNodeIcon = (type: string, className = 'h-5 w-5') => {
+export const getNodeIcon = (type: string, className = 'h-5 w-5'): LucideIcon => {
   switch (type) {
     case 'company':
-      return <Building2 className={className} />;
+      return Building2;
     case 'location':
-      return <Globe className={className} />;
+      return Globe;
     case 'building':
-      return <Building className={className} />;
+      return Building;
     case 'sensor':
-      return <Cpu className={className} />;
+      return Cpu;
     case 'dashboard':
-      return <LayoutDashboard className={className} />;
+      return LayoutDashboard;
     case 'planthead':
-      return <Flower2 className={className} />;
+      return Flower2;
     default:
-      return null;
+      return Building;
   }
 };
 
